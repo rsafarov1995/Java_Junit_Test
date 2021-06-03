@@ -1,4 +1,4 @@
-package JUnit;
+package junit;
 
 public class Assert {
     private Assert() {}
@@ -17,10 +17,10 @@ public class Assert {
     }
 
     public static <T> void notEquals(T actual, T expected) {
-        notEqualsWithErrorMessage(actual, expected, String.format(NOT_EQUAL_DEFAULT_ERROR_MESSAGE, actual, expected));
+        notEquals(actual, expected, String.format(NOT_EQUAL_DEFAULT_ERROR_MESSAGE, actual, expected));
     }
 
-    public static <T> void notEqualsWithErrorMessage(T actual, T expected, String errorMessage) {
+    public static <T> void notEquals(T actual, T expected, String errorMessage) {
         checkCondition(!actual.equals(expected), errorMessage);
     }
 

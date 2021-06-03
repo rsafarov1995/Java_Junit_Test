@@ -1,10 +1,9 @@
-package TestData;
+package testdata;
 
-import JUnit.Assert;
-import JUnit.Before;
-import JUnit.Test;
-import JUnit.After;
-//import JUnit.Assert;
+import junit.Assert;
+import junit.Before;
+import junit.Test;
+import junit.After;
 
 public class FibonacciTest {
     private MyMath instance;
@@ -14,13 +13,7 @@ public class FibonacciTest {
     public void beforeEach() {
         instance = new MyMath();
         x = instance.fibonacci(7);
-        //Assert.isFalse(true);
     }
-
-//    @Before
-//    public void beforeEach2() {
-//        Assert.equals(0, 0);
-//    }
 
     @Test
     public void fibonacciTest() {
@@ -39,7 +32,7 @@ public class FibonacciTest {
 
     @Test
     public void fibonacciTest4() {
-        Assert.notEqualsWithErrorMessage(x, 20, "Error fibonacciTest4");
+        Assert.notEquals(x, 20, "Error fibonacciTest4");
     }
 
     @Test
@@ -68,10 +61,5 @@ public class FibonacciTest {
         int i = 0;
         Assert.isTrue(true);
     }
-
-//    @After
-//    public void afterEach2() {
-//        Assert.isFalse(false);
-//    }
 
 }

@@ -1,4 +1,4 @@
-package JUnit;
+package junit;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ class Analyzer {
     public void analyze(Class<?> clazz) {
         Object instance = null;
         try {
-            clazz.getName();
             instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             classFailed.put(clazz.getName(), e.getMessage());
@@ -38,7 +37,7 @@ class Analyzer {
     }
 
     private ArrayList<Method> getMethodsOfAnnotationType(Method[] methods, Class classType) {
-        ArrayList<Method> result = new ArrayList<Method>();
+        ArrayList<Method> result = new ArrayList<>();
         for (Method method : methods) {
             if (method.isAnnotationPresent(classType)) {
                 result.add(method);
@@ -76,8 +75,8 @@ class Analyzer {
                 try {
                     method.invoke(instance);
                     var expected = method.getAnnotation(Test.class).expected();
-                    boolean exceptionShouldntThrown = expected.equals(Null.class);
-                    if (!exceptionShouldntThrown) {
+                    boolean exceptionShouldThrown = expected != Null.class;
+                    if (exceptionShouldThrown) {
                         testFailed.put(method.getName(),
                                 String.format(EXCEPTION_WASNT_THROWN_BUT_SHOULD_BE, expected));
                         alreadyFailed = true;
@@ -108,5 +107,9 @@ class Analyzer {
                 testPassed.add(method.getName());
             }
         }
+    }
+
+    static class Null extends Throwable {
+        private Null() {}
     }
 }

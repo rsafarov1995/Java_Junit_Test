@@ -1,4 +1,4 @@
-package TestData;
+package testdata;
 
 public class MyMath {
 
@@ -18,13 +18,13 @@ public class MyMath {
         }
     }
 
-    public int factorialExeption(int n) throws Exception {
+    public int factorialException(int n) throws Exception {
         if (n < 0) {
-            throw new Exception("123");
+            throw new Exception("Number less than zero.");
         } else if (n == 0) {
             return 1;
         } else {
-            return factorialExeption(n - 1) * n;
+            return factorialException(n - 1) * n;
         }
     }
 }

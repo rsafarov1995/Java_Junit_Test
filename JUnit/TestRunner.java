@@ -1,49 +1,46 @@
-package JUnit;
+package junit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class TestRunner {
-    private ArrayList<String> arguments;
-    private ConcurrentLinkedQueue<Class<?>> testClasses = new ConcurrentLinkedQueue<Class<?>>();
+    private String[] arguments;
+    private ConcurrentLinkedQueue<Class<?>> testClasses = new ConcurrentLinkedQueue<>();
     private ArrayList<String> testPassed = new ArrayList<>();
     private HashMap<String, String> testFailed = new HashMap<>();
     private HashMap<String, String> classFailed = new HashMap<>();
-    int threadsNumber = 0;
-    volatile int semaphore = 0;
+    private CountDownLatch countDownLatch;
+    private boolean initialized = false;
 
     public TestRunner(String[] args) {
-        arguments = new ArrayList<String>(args.length);
-        for (String arg : args ) {
-            arguments.add(arg);
-        }
+        arguments = args;
     }
 
     public void start() throws Exception {
-        if (arguments.size() < 2) {
+        if (arguments.length < 2) {
             throw new Exception("Too few arguments.");
         }
 
-
-        for (int i = 0; i < arguments.size(); i++) {
-            if (i == 0) {
-                threadsNumber = Integer.parseInt(arguments.get(i));
-                if (threadsNumber < 1) {
-                    throw new Exception("Threads number should be more than 1.");
-                }
-            } else {
-                testClasses.add(Class.forName(arguments.get(i)));
-            }
+        int threadsNumber = Integer.parseInt(arguments[0]);
+        if (threadsNumber < 1) {
+            throw new Exception("Threads number should be more than 1.");
         }
+
+        countDownLatch = new CountDownLatch(threadsNumber);
 
         for (int i = 0; i < threadsNumber; i++ ) {
             new TestThread(this).start();
         }
 
-        while (testingInProcess()) {
-            Thread.sleep(10);
+        for (int i = 1; i < arguments.length; i++) {
+            testClasses.add(Class.forName(arguments[i]));
         }
+        initialized = true;
+
+        countDownLatch.await(10, TimeUnit.MINUTES);
 
         printOutput();
     }
@@ -58,12 +55,12 @@ public class TestRunner {
         classFailed.putAll(analyzer.getClassFailed());
     }
 
-    public synchronized void incSemaphore() {
-        semaphore++;
+    public void countDown() {
+        countDownLatch.countDown();
     }
 
-    private boolean testingInProcess() {
-        return semaphore != threadsNumber;
+    public boolean isInitialized() {
+        return initialized;
     }
 
     private void printOutput() {
